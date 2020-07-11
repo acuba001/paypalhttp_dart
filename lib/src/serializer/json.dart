@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:paypalhttp_dart/paypalhttp/http_request.dart';
+import 'package:paypalhttp_dart/src/http_request.dart';
 
 import './serializer.dart';
 
 class Json extends Serializer {
   @override
-  String encode(HttpPaypalRequest request) => jsonEncode(request);
+  String encode(HttpPaypalRequest request) => jsonEncode(request.body);
   @override
   Object decode(Object body) => jsonDecode(body);
   @override

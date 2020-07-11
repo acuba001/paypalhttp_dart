@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'dart:js_util';
 import 'package:path/path.dart';
-import 'package:paypalhttp_dart/paypalhttp/encoder.dart';
+import 'package:paypalhttp_dart/src/encoder.dart';
 
-import 'package:paypalhttp_dart/paypalhttp/http_request.dart';
+import 'package:paypalhttp_dart/src/http_request.dart';
 
 import '../http_request.dart';
 import './serializer.dart';
@@ -19,8 +18,8 @@ class Multipart  extends Serializer{
   String encode(HttpPaypalRequest request){
     var boundary = DateTime.now().millisecondsSinceEpoch.toString();
     var headers = request.headers();
-    headers.add(
-      HttpHeaders.contentTypeHeader, 
+    headers.set(
+      'content-type', 
       'multipart/form-data; boundary=$boundary'
     );
 
@@ -29,9 +28,9 @@ class Multipart  extends Serializer{
     var file_params = <String>[];
     var body = request.body as Map;
     body.forEach((key, value) {
-      if(instanceof(value, File)){
+      if(value is File){
         file_params.add(add_file_part(key,value));
-      } else if(instanceof(value, FormPart)){
+      } else if(value is FormPart){
         form_params.add(add_form_part(key, value));
       } else{
         form_params.add(add_form_field(key, value));
@@ -58,7 +57,7 @@ class Multipart  extends Serializer{
       'name=\"${key}\"; filename=\"${filename}\"${_CLRF}';
 
     out += 'Content-Type: '
-      '${mime_type}${_CLRF}${_CLRF}${f.readAsStringSync()}${_CLRF}';
+      '${mime_type}${_CLRF}${_CLRF}${f.readAsBytesSync()}${_CLRF}';
 
     return out;
   }
@@ -93,14 +92,14 @@ class Multipart  extends Serializer{
   }
 
   String mime_type_for_filename(String filename){
-    var extension = filename.split('.').last;
-    if(extension == '.jpeg' || extension == '.jpg'){
+    var extension = filename.split('.').last.toLowerCase();
+    if(extension == 'jpeg' || extension == 'jpg'){
       return 'image/jpeg';
-    } else if(extension == '.png'){
+    } else if(extension == 'png'){
       return 'image/png';
-    } else if(extension == '.gif'){
+    } else if(extension == 'gif'){
       return 'image/gif';
-    } else if(extension == '.pdf'){
+    } else if(extension == 'pdf'){
       return 'application/pdf';
     } else{
       return 'application/octet-stream';

@@ -9,19 +9,21 @@ class HttpPaypalHeaders extends HttpHeaders{
 
   @override
   List<String> operator [](String name) {
-    if(_headers.containsKey(name)){
-      return List<String>.from(_headers[name]);
+    var lower = name.toLowerCase();
+    if(_headers.containsKey(lower)){
+      return List<String>.from(_headers[lower]);
     }
     return null;
   }
   
   @override
   void add(String name, Object value, {bool preserveHeaderCase = false}) {
+    var lower = name.toLowerCase();
     if(value is List<String>){
-      if(_headers.containsKey(name)){
-        _headers[name].addAll(value);
+      if(_headers.containsKey(lower)){
+        _headers[lower].addAll(value);
       }else{
-        _headers[name] = List<String>.from(value);
+        _headers[lower] = List<String>.from(value);
       }
       return;
     } 
@@ -34,18 +36,18 @@ class HttpPaypalHeaders extends HttpHeaders{
           out.add('${k}=${v}');
         }
       });
-      if(_headers.containsKey(name)){
-        _headers[name].addAll(out);
+      if(_headers.containsKey(lower)){
+        _headers[lower].addAll(out);
       }else{
-        _headers[name] = out;
+        _headers[lower] = out;
       }
       return;
     } 
     if(value is String){
-      if(_headers.containsKey(name)){
-        _headers[name].add(value);
+      if(_headers.containsKey(lower)){
+        _headers[lower].add(value);
       } else{
-        _headers[name] = <String> [value];
+        _headers[lower] = <String> [value];
       }
       return;
     }
@@ -70,8 +72,9 @@ class HttpPaypalHeaders extends HttpHeaders{
 
   @override
   void remove(String name, Object value) {
+    var lower = name.toLowerCase();
     if(value is List<String>){
-      _headers[name].removeWhere((s) => value.contains(s));
+      _headers[lower].removeWhere((s) => value.contains(s));
       return;
     } 
     if(value is Map<String, String>){
@@ -83,11 +86,11 @@ class HttpPaypalHeaders extends HttpHeaders{
           out.add('${k}=${v}');
         }
       });
-      remove(name, out);
+      remove(lower, out);
       return;
     } 
     if(value is String){
-      _headers[name].remove(value);
+      _headers[lower].remove(value);
       return;
     }
     throw Exception('Value type for Header.add unexpected. Please ' 
@@ -96,13 +99,15 @@ class HttpPaypalHeaders extends HttpHeaders{
 
   @override
   void removeAll(String name) {
-    _headers.remove(name);
+    var lower = name.toLowerCase();
+    _headers.remove(lower);
   }
 
   @override
   void set(String name, Object value, {bool preserveHeaderCase = false}) {
+    var lower = name.toLowerCase();
     if(value is List<String>){
-      _headers[name] = List<String>.from(value);
+      _headers[lower] = List<String>.from(value);
       return;
     } 
     if(value is Map<String, String>){
@@ -114,11 +119,11 @@ class HttpPaypalHeaders extends HttpHeaders{
           out.add('${k}=${v}');
         }
       });
-      _headers[name] = out;
+      _headers[lower] = out;
       return;
     } 
     if(value is String){
-      _headers[name] = <String> [value];
+      _headers[lower] = <String> [value];
       return;
     }
     throw Exception('Value type for Header.add unexpected. Please ' 
@@ -127,8 +132,9 @@ class HttpPaypalHeaders extends HttpHeaders{
 
   @override
   String value(String name) {
-    if(_headers.containsKey(name)){
-      return _headers[name].join(', ');
+    var lower = name.toLowerCase();
+    if(_headers.containsKey(lower)){
+      return _headers[lower].join(', ');
     }else{
       return null;
     }

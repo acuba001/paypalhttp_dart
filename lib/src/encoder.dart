@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import './serializer/serializer.dart';
-import './http_request.dart';
+import 'http_request.dart';
 
 class Encoder{
   
@@ -11,8 +11,8 @@ class Encoder{
 
   String serialize_request(HttpPaypalRequest request){
     var header = request.headers();
-    var contentType = header.value(HttpHeaders.contentTypeHeader);
-    if( contentType != null){
+    var contentType = header.value('content-type');
+    if(contentType != null){
       var encoder = _encoder(contentType);
       if(encoder != null){
         return encoder.encode(request);
@@ -21,7 +21,7 @@ class Encoder{
           '${contentType}. Supported encodings are ${supported_encodings()}');
       }
     }
-    throw Exception('Http request does not have content-type header set');
+    throw MissingContentTypeException();
   }
 
   Object deserialize_response(Object responseBody, HttpHeaders headers){
@@ -52,5 +52,12 @@ class Encoder{
       }
     }
     return null;
+  }
+}
+
+class MissingContentTypeException implements Exception{
+  @override
+  String toString() {
+    return 'HttpRequest does not have Content-Type header set';
   }
 }

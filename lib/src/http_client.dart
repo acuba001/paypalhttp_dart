@@ -1,14 +1,13 @@
-import 'dart:html';
 import 'dart:io';
 import 'dart:convert';
-import 'package:paypalhttp_dart/paypalhttp/serializer/form_endcoded.dart';
+import './serializer/form_endcoded.dart';
 
 import 'dart:async';
 
-import './environment.dart';
-import './encoder.dart';
-import './http_request.dart';
-import './http_response.dart';
+import 'environment.dart';
+import 'encoder.dart';
+import 'http_request.dart';
+import 'http_response.dart';
 import './serializer/json.dart';
 import './serializer/text.dart';
 import './serializer/multipart.dart';

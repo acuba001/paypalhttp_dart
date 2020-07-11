@@ -8,7 +8,7 @@ class FormEncoded extends Serializer{
     var params = [];
     var body = httpRequest.body as Map<String,String>;
     body.forEach((key, value) => params.add('${key}=${value}'));
-    return Uri.encodeComponent(params.join('&'));
+    return Uri.encodeFull(params.join('&'));
   }
   @override
   Object decode(Object responseBody) {

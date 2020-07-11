@@ -1,4 +1,4 @@
-import 'package:paypalhttp_dart/paypalhttp/http_headers.dart';
+import 'package:paypalhttp_dart/src/http_headers.dart';
 
 extension StringExtension on String {
     String capitalize() {

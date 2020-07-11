@@ -1,4 +1,4 @@
-import './http_headers.dart';
+import 'http_headers.dart';
 
 class HttpPaypalRequest {
   String path;
