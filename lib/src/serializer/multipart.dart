@@ -56,8 +56,14 @@ class Multipart  extends Serializer{
     var out = 'Content-Disposition: form-data; '
       'name=\"${key}\"; filename=\"${filename}\"${_CLRF}';
 
-    out += 'Content-Type: '
-      '${mime_type}${_CLRF}${_CLRF}${f.readAsBytesSync()}${_CLRF}';
+    if(mime_type != 'application/octet-stream'){
+      out += 'Content-Type: '
+        '${mime_type}${_CLRF}${_CLRF}${f.readAsBytesSync()}${_CLRF}';
+    }else{
+      out += 'Content-Type: '
+        '${mime_type}${_CLRF}${_CLRF}${f.readAsStringSync()}${_CLRF}';
+
+    }
 
     return out;
   }

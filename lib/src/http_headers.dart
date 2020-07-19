@@ -3,61 +3,39 @@ import 'dart:io';
 class HttpPaypalHeaders extends HttpHeaders{
 
   final Map<String, List<String>> _headers;
+  final Map<String, String> _lowerToKey;
 
   HttpPaypalHeaders(): 
-    _headers = <String, List<String>>{};
+    _headers = <String, List<String>>{},
+    _lowerToKey = <String, String>{};
 
   @override
   List<String> operator [](String name) {
-    var lower = name.toLowerCase();
-    if(_headers.containsKey(lower)){
-      return List<String>.from(_headers[lower]);
-    }
-    return null;
+    return _headers[_lowerToKey[name.toLowerCase()]];
   }
   
   @override
   void add(String name, Object value, {bool preserveHeaderCase = false}) {
-    var lower = name.toLowerCase();
-    if(value is List<String>){
-      if(_headers.containsKey(lower)){
-        _headers[lower].addAll(value);
+    final lower = name.toLowerCase();
+    if(preserveHeaderCase){
+      if(_lowerToKey.containsKey(lower)){
+        _headers[name] = _headers[_lowerToKey[lower]];
+        _headers.remove(_lowerToKey[lower]);
+        _headers[name].add(value);
       }else{
-        _headers[lower] = List<String>.from(value);
+        _headers.putIfAbsent(name, () => <String>[]).add(value.toString());
       }
-      return;
-    } 
-    if(value is Map<String, String>){
-      var out = <String>[];
-      value.forEach((k, v) {
-        if(value == null) {
-          out.add(k);
-        } else {
-          out.add('${k}=${v}');
-        }
-      });
-      if(_headers.containsKey(lower)){
-        _headers[lower].addAll(out);
-      }else{
-        _headers[lower] = out;
-      }
-      return;
-    } 
-    if(value is String){
-      if(_headers.containsKey(lower)){
-        _headers[lower].add(value);
-      } else{
-        _headers[lower] = <String> [value];
-      }
-      return;
+      _lowerToKey[lower] = name;
+    }else{
+      _headers.putIfAbsent(lower, () => <String>[]).add(value.toString());
+      _lowerToKey[lower] = lower;
     }
-    throw Exception('Value type for Header.add unexpected. Please ' 
-      'input a List<String>, Map<String,String>, or String.');
   }
 
   @override
   void clear() {
     _headers.clear();
+    _lowerToKey.clear();
   }
 
   @override
@@ -72,72 +50,38 @@ class HttpPaypalHeaders extends HttpHeaders{
 
   @override
   void remove(String name, Object value) {
-    var lower = name.toLowerCase();
-    if(value is List<String>){
-      _headers[lower].removeWhere((s) => value.contains(s));
-      return;
-    } 
-    if(value is Map<String, String>){
-      var out = <String>[];
-      value.forEach((k, v) {
-        if(value == null) {
-          out.add(k);
-        } else {
-          out.add('${k}=${v}');
-        }
-      });
-      remove(lower, out);
-      return;
-    } 
-    if(value is String){
-      _headers[lower].remove(value);
-      return;
+    final lower = name.toLowerCase();
+    if(_lowerToKey.containsKey(lower)){
+      _headers[_lowerToKey[lower]].remove(value.toString());
     }
-    throw Exception('Value type for Header.add unexpected. Please ' 
-      'input a List<String>, Map<String,String>, or String.');
   }
 
   @override
   void removeAll(String name) {
-    var lower = name.toLowerCase();
-    _headers.remove(lower);
+    final lower = name.toLowerCase();
+    if(_lowerToKey.containsKey(lower)){
+      _headers.remove(_lowerToKey[name.toLowerCase()]);
+      _lowerToKey.remove(lower);
+    }
   }
 
   @override
   void set(String name, Object value, {bool preserveHeaderCase = false}) {
-    var lower = name.toLowerCase();
-    if(value is List<String>){
-      _headers[lower] = List<String>.from(value);
-      return;
-    } 
-    if(value is Map<String, String>){
-      var out = <String>[];
-      value.forEach((k, v) {
-        if(value == null) {
-          out.add(k);
-        } else {
-          out.add('${k}=${v}');
-        }
-      });
-      _headers[lower] = out;
-      return;
-    } 
-    if(value is String){
-      _headers[lower] = <String> [value];
-      return;
+    final lower = name.toLowerCase();
+    if(_lowerToKey.containsKey(lower)){
+      _headers.remove(_lowerToKey[lower]);
     }
-    throw Exception('Value type for Header.add unexpected. Please ' 
-      'input a List<String>, Map<String,String>, or String.');
+    _lowerToKey[lower] = name;
+    _headers[name] = <String>[value.toString()];
   }
 
   @override
   String value(String name) {
-    var lower = name.toLowerCase();
-    if(_headers.containsKey(lower)){
-      return _headers[lower].join(', ');
-    }else{
+    final values = _headers[_lowerToKey[name.toLowerCase()]];
+    if (values == null) {
       return null;
     }
+    return values.single;
   }
 
 }

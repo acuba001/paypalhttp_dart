@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:mockito/mockito.dart';
 import 'package:paypalhttp_dart/paypalhttp_dart.dart';
@@ -13,11 +12,6 @@ void main() {
   group('Test for Encoder:', () {
     HttpPaypalRequest req;
     HttpPaypalHeaders headers;
-
-    // setUp(() {
-    //   req = MockHttpPaypalRequest();
-    //   headers = MockHttpPaypalHeaders();
-    // });
 
     test('Throws when content-type header not set.', () {
 
@@ -200,10 +194,5 @@ void main() {
     });
 
     // TODO: Add deserializing tests
-
-    // tearDown(() {
-    //   req = null;
-    //   headers = null;
-    // });
   });
 }

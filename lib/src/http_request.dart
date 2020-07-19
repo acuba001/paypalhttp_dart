@@ -16,7 +16,8 @@ class HttpPaypalRequest {
 
   HttpPaypalRequest copy(){
     var other = HttpPaypalRequest(path, verb, _responseType);
-    _headers.forEach((name, values) => other.headers().add(name, values));
+    other.body = body;
+    _headers.forEach((name, values) => other.headers().add(name, values.single));
     return other;
   }
 }

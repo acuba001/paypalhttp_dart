@@ -46,14 +46,18 @@ class HttpPaypalClient{
     var headers = reqcpy.headers();
 
     // Apply injectors
-    _injectors.map((e) => e(reqcpy));
+    _injectors.forEach((e) => e(reqcpy));
 
     // Add user-agent header
-    headers.add(HttpHeaders.userAgentHeader, get_user_agent());
+    client.userAgent = null;
+    headers.add('User-Agent', get_user_agent(), preserveHeaderCase: true);
 
     return client.openUrl(reqcpy.verb, Uri.parse(environment.baseUrl + reqcpy.path))
-      .then((HttpClientRequest req) {
-        headers.forEach((name, values) => req.headers.add(name, values));
+      .then((req) {
+        req.contentLength = -1;
+        headers.forEach((name, values) {
+          req.headers.add(name, values.single, preserveHeaderCase: true);
+        });
         if(reqcpy.body != null){
           req.write(encoder.serialize_request(reqcpy));
         }
@@ -66,14 +70,14 @@ class HttpPaypalClient{
     var status_code = response.statusCode;
 
     if(200 <= status_code && status_code <= 299){
-      var body = '';
       var text = await response.transform(utf8.decoder).join('; ');
       if(text != null && text.isNotEmpty && text != 'None'){
-        body = encoder.deserialize_response(text, response.headers);
+        var body = encoder.deserialize_response(text, response.headers);
+        return HttpPaypalResponse(body, status_code, response.headers);
       }
-      return HttpPaypalResponse(body, status_code, response.headers);
+      return HttpPaypalResponse('', status_code, response.headers);
     }
     var message = await response.join('; ');
-    throw HttpException(message);
+    return Future.error(HttpException(message));
   }
 }
