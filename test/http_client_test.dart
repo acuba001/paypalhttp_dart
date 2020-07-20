@@ -148,7 +148,7 @@ void main() {
 
       var request = mockServer.takeRequest();
       var licenseStr = license.readAsStringSync();
-      
+      // TODO: check if this is what is expected
       expect(
         request.body.contains(licenseStr), 
         equals(true)

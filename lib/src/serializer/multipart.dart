@@ -19,8 +19,9 @@ class Multipart  extends Serializer{
     var boundary = DateTime.now().millisecondsSinceEpoch.toString();
     var headers = request.headers();
     headers.set(
-      'content-type', 
-      'multipart/form-data; boundary=$boundary'
+      'Content-Type', 
+      'multipart/form-data; boundary=$boundary',
+      preserveHeaderCase: true
     );
 
     var params = <String>[];
@@ -70,7 +71,7 @@ class Multipart  extends Serializer{
 
   String add_form_part(String key, FormPart formPart){
     var out = 'Content-Disposition: form-data; name=\"${key}\"';
-    var contentType = formPart.headers.value(HttpHeaders.contentTypeHeader);
+    var contentType = formPart.headers.value('Content-Type');
     if(contentType == 'application/json'){
       out += '; filename=\"${key}.json\"';
     }

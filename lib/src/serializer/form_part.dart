@@ -15,7 +15,7 @@ class FormPart{
     this.headers = HttpPaypalHeaders();
     headers.forEach((name, values) {
       var newName = name.split('-').map((e) => e.capitalize()).join('-');
-      this.headers.add(newName, values);
+      this.headers.add(newName, values.single);
     });
   }
 }
